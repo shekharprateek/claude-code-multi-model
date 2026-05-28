@@ -8,7 +8,38 @@
 > It is not meant for production use. Review and harden all scripts, configurations,
 > and IAM permissions before using in any production or sensitive environment.
 
-Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **any foundation model on Amazon Bedrock** — not just Anthropic models. Switch between 43 models from 12 providers with a single command.
+## The Problem: AI Coding Agents Are Expensive at Scale
+
+Enterprise spending on generative AI hit **$13.8 billion in 2024** — a 6x increase from $2.3B the year before ([Menlo Ventures](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/)). A significant portion goes to LLM inference costs powering coding assistants, chat agents, and autonomous workflows.
+
+The economics are stark:
+
+- **Frontier models cost 10-100x more** than budget alternatives ($3-15/M tokens vs $0.15-0.60/M tokens)
+- **AI coding agents are token-hungry** — a single complex task session can consume 100K-500K+ tokens with tool use, multi-file edits, and iterative reasoning
+- **Not every task needs a frontier model** — bug fixes, test generation, and boilerplate don't require the same reasoning power as architecture decisions
+- **44% of enterprises cite price as a motivation for switching LLMs** ([Menlo Ventures](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/))
+
+Research confirms that intelligent model routing dramatically reduces costs without sacrificing quality:
+
+- [FrugalGPT](https://arxiv.org/abs/2305.05176) (Stanford) — matches GPT-4 performance with up to **98% cost reduction** through LLM cascades
+- [RouteLLM](https://arxiv.org/abs/2406.18665) (UC Berkeley) — reduces costs by **over 2x** without compromising response quality
+- [Hybrid LLM](https://arxiv.org/abs/2404.14618) (ICLR 2024) — **40% fewer calls** to the expensive model with no quality drop
+
+## This Solution: Multi-Model Claude Code
+
+Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **any of 43 foundation models on Amazon Bedrock** — not just Anthropic models. Route routine tasks to models that cost 5-20x less, reserve frontier models for complex reasoning.
+
+Our benchmark shows **Qwen Coder 30B delivers 93% of Claude Sonnet's quality at 1/20th the cost**, and **Kimi K2.5 matches Sonnet's pass rate at 1/5th the cost** (see [Benchmark Results](#benchmark-results) below).
+
+```
+Task Complexity        Recommended Model         Cost vs Sonnet
+────────────────       ─────────────────         ──────────────
+Simple bug fixes       Qwen Coder 30B            20x cheaper
+Test generation        Kimi K2.5                  5x cheaper
+Feature additions      Qwen Coder Next           10x cheaper
+Complex refactoring    Claude Sonnet             baseline
+Architecture decisions Claude Opus               frontier
+```
 
 ## Architecture
 
