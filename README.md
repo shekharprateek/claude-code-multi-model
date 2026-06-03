@@ -60,32 +60,63 @@ on workloads that look like yours before routing real traffic.
 
 ## Architecture
 
+### Bedrock path
+
 ```text
-                         ┌─────────────────────────────┐
-                         │      Claude Code CLI        │
-                         │  (Anthropic Messages API)   │
-                         └──────────┬──────────────────┘
-                                    │
-                 ┌──────────────────┼──────────────────┐
-                 │                  │                   │
-         ┌───────▼──────┐  ┌───────▼──────┐  ┌────────▼─────────┐
-         │ Native       │  │ LiteLLM      │  │ SSH tunnel       │
-         │ (no proxy)   │  │ Proxy        │  │ (no proxy)       │
-         │              │  │              │  │                  │
-         │ Claude Opus  │  │ 38 third-    │  │ localhost:11434  │
-         │ Claude Sonnet│  │ party models │  │ → EC2:11434      │
-         │ Claude Haiku │  │ (Anthropic → │  │                  │
-         │              │  │  OpenAI fmt) │  │                  │
-         └──────┬───────┘  └──────┬───────┘  └────────┬─────────┘
-                │                 │                    │
-         ┌──────▼───────┐  ┌─────▼────────┐  ┌───────▼─────────┐
-         │              │  │              │  │ EC2 GPU         │
-         │ Amazon       │  │ Amazon       │  │ instance with   │
-         │ Bedrock      │  │ Bedrock      │  │ Ollama          │
-         │              │  │              │  │ (open-source    │
-         │              │  │              │  │  model)         │
-         └──────────────┘  └──────────────┘  └─────────────────┘
+       ┌───────────────────────────────┐
+       │        Claude Code CLI        │
+       │   (Anthropic Messages API)    │
+       └────────┬─────────────┬────────┘
+                │             │
+   Anthropic    │             │   third-party
+   models       │             │   models
+                │             │
+       ┌────────▼─────┐ ┌─────▼──────────┐
+       │    Native    │ │ LiteLLM Proxy  │
+       │   (no proxy) │ │  Anthropic ↔   │
+       │              │ │  OpenAI format │
+       └────────┬─────┘ └─────┬──────────┘
+                │             │
+                └──────┬──────┘
+                       │
+            ┌──────────▼───────────────┐
+            │     Amazon Bedrock       │
+            │                          │
+            │  • 5 Anthropic           │
+            │      Opus, Sonnet, Haiku │
+            │  • 38 third-party        │
+            │      Qwen, Kimi,         │
+            │      DeepSeek, Mistral…  │
+            └──────────────────────────┘
 ```
+
+Both routes end at the **same** Amazon Bedrock service. The only difference
+is how Claude Code reaches it: Anthropic models go direct (no proxy);
+third-party models go through the LiteLLM proxy because they speak the OpenAI
+Chat Completions format and Claude Code speaks Anthropic Messages.
+
+### Self-hosted path
+
+```text
+       ┌───────────────────────────────┐
+       │        Claude Code CLI        │
+       │   ANTHROPIC_BASE_URL=         │
+       │     http://localhost:11434    │
+       └──────────────┬────────────────┘
+                      │
+                      │  SSH tunnel
+                      │  localhost:11434 → EC2:11434
+                      ▼
+       ┌───────────────────────────────┐
+       │     EC2 GPU instance          │
+       │     Ollama (OpenAI-compatible)│
+       │     open-source model         │
+       └───────────────────────────────┘
+```
+
+Claude Code is pointed at `localhost`; the SSH tunnel transparently forwards
+every request to Ollama on the EC2 instance. No public ingress, no API keys
+— the only network path in is SSH.
 
 ## Benchmark
 
