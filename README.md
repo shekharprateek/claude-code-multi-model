@@ -85,6 +85,23 @@ We evaluated 5 models across 5 real-world coding tasks (bug fix, test writing, f
          └──────────────┘  └──────────────┘  └─────────────────┘
 ```
 
+## Benchmark
+
+We measured model quality on the public [HumanEval](https://github.com/openai/human-eval)
+benchmark (164 tasks), driving each task through Claude Code backed by each model
+and scoring with standard `pass@1`:
+
+| Model | pass@1 |
+| --- | --- |
+| Claude Sonnet 4.6 | 97.6% |
+| Kimi K2.5 | 96.3% |
+| DeepSeek V3 | 94.5% |
+| Qwen Coder Next | 91.5% |
+| Qwen Coder 30B | 90.9% |
+
+Budget models reach 93–99% of the frontier model's pass rate. Full method,
+caveats, and reproduce steps in [bedrock/README.md](bedrock/README.md#benchmark-humaneval).
+
 ## Quick Start
 
 ### Option A: Bedrock (43 models, pay-per-token)

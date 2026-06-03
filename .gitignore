@@ -1,6 +1,15 @@
 results/
+# but keep the published HumanEval benchmark summaries (evidence for README claims)
+!bedrock/benchmark/results/
+!bedrock/benchmark/results/**/summary.json
+!bedrock/benchmark/results/**/summary_rescored.json
+!bedrock/benchmark/results/**/results_rescored.csv
+docs-local/
 FINDINGS.md
 PLAN.md
+REINVENT_SUBMISSION.md
+MEDIUM_ARTICLE.md
+ONE_PAGER.md
 *.pem
 *.key
 *.log

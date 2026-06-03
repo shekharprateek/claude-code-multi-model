@@ -8,38 +8,15 @@
 > It is not meant for production use. Review and harden all scripts, configurations,
 > and IAM permissions before using in any production or sensitive environment.
 
-## The Problem: AI Coding Agents Are Expensive at Scale
+Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **any of 43
+foundation models on Amazon Bedrock** — not just Anthropic models. A LiteLLM proxy
+translates Claude Code's Anthropic Messages API to the OpenAI Chat Completions API
+that Bedrock Mantle's third-party models speak, so you can route routine tasks to
+cheaper models and reserve frontier models for complex work. Native Anthropic
+models run directly on Bedrock with no proxy.
 
-Enterprise spending on generative AI hit **$13.8 billion in 2024** — a 6x increase from $2.3B the year before ([Menlo Ventures](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/)). A significant portion goes to LLM inference costs powering coding assistants, chat agents, and autonomous workflows.
-
-The economics are stark:
-
-- **Frontier models cost 10-100x more** than budget alternatives ($3-15/M tokens vs $0.15-0.60/M tokens)
-- **AI coding agents are token-hungry** — a single complex task session can consume 100K-500K+ tokens with tool use, multi-file edits, and iterative reasoning
-- **Not every task needs a frontier model** — bug fixes, test generation, and boilerplate don't require the same reasoning power as architecture decisions
-- **44% of enterprises cite price as a motivation for switching LLMs** ([Menlo Ventures](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/))
-
-Research confirms that intelligent model routing dramatically reduces costs without sacrificing quality:
-
-- [FrugalGPT](https://arxiv.org/abs/2305.05176) (Stanford) — matches GPT-4 performance with up to **98% cost reduction** through LLM cascades
-- [RouteLLM](https://arxiv.org/abs/2406.18665) (UC Berkeley) — reduces costs by **over 2x** without compromising response quality
-- [Hybrid LLM](https://arxiv.org/abs/2404.14618) (ICLR 2024) — **40% fewer calls** to the expensive model with no quality drop
-
-## This Solution: Multi-Model Claude Code
-
-Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **any of 43 foundation models on Amazon Bedrock** — not just Anthropic models. Route routine tasks to models that cost 5-20x less, reserve frontier models for complex reasoning.
-
-Our benchmark shows **Qwen Coder 30B delivers 93% of Claude Sonnet's quality at 1/20th the cost**, and **Kimi K2.5 matches Sonnet's pass rate at 1/5th the cost** (see [Benchmark Results](#benchmark-results) below).
-
-```
-Task Complexity        Recommended Model         Cost vs Sonnet
-────────────────       ─────────────────         ──────────────
-Simple bug fixes       Qwen Coder 30B            20x cheaper
-Test generation        Kimi K2.5                  5x cheaper
-Feature additions      Qwen Coder Next           10x cheaper
-Complex refactoring    Claude Sonnet             baseline
-Architecture decisions Claude Opus               frontier
-```
+See the [HumanEval benchmark](#benchmark-humaneval) below for a quality comparison
+across models.
 
 ## Architecture
 
@@ -100,6 +77,58 @@ Architecture decisions Claude Opus               frontier
 | **Writer** (1) | Palmyra Vision 7B | `palmyra-vision-7b` |
 
 > **Note:** Meta Llama, Amazon Nova, and DeepSeek R1 are available on Bedrock but are **not** on Mantle — they lack tool calling support required by Claude Code.
+
+## Benchmark (HumanEval)
+
+To compare model quality, we ran [HumanEval](https://github.com/openai/human-eval)
+— OpenAI's 164-task code-generation benchmark — through Claude Code backed by
+each model. Each task was driven by Claude Code (`claude -p`) and scored with the
+standard `pass@1` method: the model's completion is concatenated with the task's
+prompt preamble and unit tests, executed, and counted as a pass only if every
+assertion holds.
+
+| Model | Routing | pass@1 | Passed | Avg time/task |
+| --- | --- | --- | --- | --- |
+| Claude Sonnet 4.6 | native Bedrock | **97.6%** | 160/164 | 3.4s |
+| Kimi K2.5 | proxy → Mantle | 96.3% | 158/164 | 5.9s |
+| DeepSeek V3 | proxy → Mantle | 94.5% | 155/164 | 19.6s |
+| Qwen Coder Next | proxy → Mantle | 91.5% | 150/164 | 14.1s |
+| Qwen Coder 30B | proxy → Mantle | 90.9% | 149/164 | 9.5s |
+
+All 164 tasks, single run per model. The budget models reach 93–99% of the
+frontier model's pass rate on this benchmark. Remaining failures are genuine
+incorrect solutions on HumanEval's harder tasks (e.g. /93, /127, /132, /145),
+not harness artifacts.
+
+> **Sonnet versions:** The table uses **Claude Sonnet 4.6**
+> (`us.anthropic.claude-sonnet-4-6`), which is what the `claude-sonnet` alias in
+> [scripts/claude-model.sh](scripts/claude-model.sh) pins. For reference, Claude
+> Code's *built-in* default Sonnet alias (no explicit pin) resolves to **Sonnet
+> 4.5** and scored 99.4% (163/164) in a separate run — single-run pass@1 varies
+> by a few tasks between versions and runs, so treat the two as comparable.
+
+**Reproduce:**
+
+```bash
+cd benchmark
+# Start the proxy first (for the non-Anthropic models)
+../scripts/setup-proxy.sh
+python3 humaneval_runner.py --models claude-sonnet,qwen-coder-30b,kimi-k2.5,qwen-coder-next,deepseek-v3 --all
+```
+
+Raw results (per-task CSV + summary) are saved under `benchmark/results/`.
+
+**Source:** The benchmark tasks come directly from the public HumanEval dataset —
+the [`openai/human-eval`](https://github.com/openai/human-eval) repository, loaded
+via the [`openai_humaneval`](https://huggingface.co/datasets/openai/openai_humaneval)
+dataset on Hugging Face. We did not modify the tasks; each was driven through
+[Claude Code](https://github.com/anthropics/claude-code) and scored with the
+standard `pass@1` method.
+
+> **Caveat:** HumanEval measures single-function code generation, not multi-file
+> agentic editing. It is a quality signal for routing decisions, not a complete
+> evaluation of agent capability. Pair it with your own workload before choosing
+> a model for production routing.
 
 ## Prerequisites
 
@@ -260,102 +289,6 @@ alias cc-kimi="$CC_PROXY claude --settings ~/claude-code-multi-model-bedrock/con
 | `The provided model identifier is invalid` | Make sure you're using `--settings config/claude-proxy-settings.json` (disables native Bedrock mode) |
 | `Token expired` | Run `./scripts/setup-proxy.sh --refresh` then restart proxy |
 | Small model fails with Claude Code | Claude Code's system prompt is ~100K chars — models with <128K context may fail |
-
-## Benchmark Results
-
-We evaluated 5 models across 5 real-world coding tasks to answer: **can cheaper models match Claude Sonnet on real coding work?**
-
-### Tasks
-
-Each task gives the model a working directory with source files, a natural-language prompt, and a deterministic verifier. The model uses Claude Code with full tool access (Edit, Write, Read, Bash) to solve it.
-
-| # | Task | Prompt | What It Tests | Verifier |
-|---|------|--------|---------------|----------|
-| 1 | **Bug Fix** | Fix off-by-one error in `binary_search()` that causes IndexError on empty arrays | Debugging: read code, identify root cause, apply minimal fix | pytest — 8 test cases covering empty, single, found, not-found, duplicates |
-| 2 | **Write Tests** | Write comprehensive unit tests for a `ShoppingCart` class (add/remove items, discounts, totals) | Test generation: understand API surface, cover edge cases, write runnable code | pytest — all generated tests must pass against the implementation |
-| 3 | **Add Feature** | Add `POST /items` endpoint to a FastAPI app with validation (name required, price > 0, auto-ID, return 201) | Feature work: modify existing code, use framework correctly, handle validation | HTTP assertions — 201 on valid input, 422 on invalid, correct response body |
-| 4 | **Refactor** | Break a 90-line monolithic CSV processor into 4+ functions, each ≤30 lines, preserving the public API | Refactoring: decompose safely, maintain behavior, improve structure | pytest + `grep` — existing tests pass AND function count ≥ 4 |
-| 5 | **Fix Imports** | Resolve circular import between `models.py` ↔ `services.py` so `python main.py` runs | Architecture: understand dependency graph, restructure without breaking contracts | pytest — 5 tests covering import, behavior, and validation |
-
-### Pass/Fail + Quality Scores
-
-| Model | Input $/M | Output $/M | Pass Rate | Quality (1-5) | Avg Latency |
-|-------|-----------|------------|-----------|---------------|-------------|
-| **claude-sonnet** | $3.00 | $15.00 | **100%** | **4.5** | 35s |
-| **qwen-coder-30b** | $0.15 | $0.62 | 80% | **4.2** | 129s |
-| **kimi-k2.5** | $0.60 | $2.50 | 80% | **4.1** | 94s |
-| **qwen-coder-next** | $0.30 | $1.20 | 80% | **4.0** | 140s |
-| **deepseek-v3** | $0.50 | $2.00 | 60% | **3.2** | 155s |
-
-### Task Breakdown
-
-| Model | Bug Fix | Write Tests | Add Feature | Refactor | Fix Imports |
-|-------|---------|-------------|-------------|----------|-------------|
-| claude-sonnet | PASS (16s) | PASS (75s) | PASS (18s) | PASS (31s) | PASS (36s) |
-| qwen-coder-next | PASS (148s) | FAIL | PASS (91s) | PASS (180s) | PASS (167s) |
-| deepseek-v3 | FAIL | FAIL | PASS (109s) | PASS (180s) | PASS (180s) |
-| kimi-k2.5 | PASS (88s) | FAIL | PASS (43s) | PASS (132s) | PASS (94s) |
-| qwen-coder-30b | PASS (76s) | FAIL | PASS (41s) | PASS (180s) | PASS (170s) |
-
-### Cost Efficiency
-
-```
-Model            Cost Relative    Quality Retained    Best For
-─────────────    ────────────     ────────────────    ────────────────────────
-claude-sonnet    1.0x (baseline)  100%                Architecture, complex reasoning
-kimi-k2.5       5x cheaper       91%                 Feature work, refactoring
-qwen-coder-next 10x cheaper      89%                 Bug fixes, boilerplate
-qwen-coder-30b  20x cheaper      93%                 Simple edits, test generation
-```
-
-**Key finding**: Routing routine tasks (bug fixes, refactoring, feature additions) to Kimi K2.5 or Qwen Coder 30B achieves **90%+ of Claude Sonnet's quality at 5-20x lower cost**. Reserve Sonnet/Opus for complex architecture decisions and multi-file reasoning.
-
-### How We Measured
-
-**Deterministic Verifiers (Pass/Fail):**
-- Each task includes pytest tests or validation scripts that verify correctness
-- Models run Claude Code with full tool use (Edit, Write, Read, Bash)
-- Pass = all tests pass in the working directory after the model finishes
-
-**LLM-as-Judge (Quality 1-5):**
-- Claude Opus (native Bedrock) evaluates the actual generated code files
-- Scores on 4 dimensions: correctness, code quality, completeness, efficiency
-- Judge sees the code, not Claude Code's text output — evaluates what was written
-
-**Cost Calculation:**
-- Input/output token pricing from [Bedrock pricing page](https://aws.amazon.com/bedrock/pricing/)
-- Cost efficiency = (Claude Sonnet price) / (model price) at equivalent quality
-- "Quality Retained" = model's average judge score / Claude Sonnet's average judge score
-
-**Tasks:**
-| Task | What It Tests | Verifier |
-|------|---------------|----------|
-| `task1_bugfix` | Fix off-by-one in binary search | pytest: 8 test cases |
-| `task2_tests` | Write tests for ShoppingCart class | pytest: all generated tests pass |
-| `task3_feature` | Add POST /items to FastAPI app | HTTP assertions: 201 + validation |
-| `task4_refactor` | Break monolith into 4+ functions | pytest + function count check |
-| `task5_circular_import` | Fix models↔services circular dep | pytest: 5 import/behavior tests |
-
-### Running the Benchmark
-
-```bash
-cd benchmark
-
-# Run all models, all tasks (with LLM-as-judge)
-./run.sh
-
-# Specific models or tasks
-./run.sh --models "kimi-k2.5,qwen-coder-30b"
-./run.sh --tasks "task1_bugfix,task3_feature"
-
-# Skip judge (faster, pass/fail only)
-./run.sh --no-judge
-
-# Custom timeout per task
-./run.sh --timeout 240
-```
-
-Results are saved to `benchmark/results/` as CSV files.
 
 ## See Also
 
