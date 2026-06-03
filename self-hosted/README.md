@@ -14,14 +14,24 @@ full control over the model.
 
 ```text
 Your Machine
-  │
-  │  SSH tunnel (encrypted, no open ports needed)
-  │
-  ▼
-Amazon EC2 GPU Instance (g6e.xlarge)
-  Open-source model (Qwen 3.5-35B) via Ollama
-  NVIDIA L40S, 45GB VRAM — runs fully within your VPC
+  ┌──────────────────────────────────────┐
+  │ Claude Code CLI                      │
+  │   ANTHROPIC_BASE_URL=localhost:11434 │
+  └──────────────┬───────────────────────┘
+                 │
+                 │  SSH tunnel (encrypted, no open ports needed)
+                 │  localhost:11434  ──►  EC2:11434
+                 ▼
+  ┌──────────────────────────────────────┐
+  │ Amazon EC2 GPU Instance (g6e.xlarge) │
+  │   Ollama serving Qwen 3.5-35B        │
+  │   NVIDIA L40S, 45GB VRAM             │
+  └──────────────────────────────────────┘
 ```
+
+Claude Code thinks it is talking to a local OpenAI-compatible endpoint; the SSH
+tunnel transparently forwards every request to the model server on the EC2
+instance. No API keys, no public ingress — the only network path in is SSH.
 
 ## Why Run on EC2?
 
