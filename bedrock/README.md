@@ -138,6 +138,16 @@ python3 humaneval_runner.py --models us.anthropic.claude-sonnet-4-6,qwen.qwen3-c
 
 Raw results (per-task CSV + summary) are saved under `benchmark/results/`.
 
+> **Security warning:** `humaneval_runner.py` executes model-generated Python
+> directly on the host with `subprocess.run(["python3", path])`. There is a
+> per-task timeout, but no filesystem, network, or environment-variable
+> isolation. A malicious or buggy completion can read/write local files and
+> reach any network endpoint your shell can reach. **Run this benchmark inside
+> a disposable container or VM**, not on a machine with sensitive credentials
+> or production access. If you need to harden it in-place, wrap the subprocess
+> in `firejail`, `bwrap`, or `docker run --rm --network=none` and drop env
+> vars before invocation.
+
 **Source:** The benchmark tasks come directly from the public HumanEval dataset —
 the [`openai/human-eval`](https://github.com/openai/human-eval) repository, loaded
 via the [`openai_humaneval`](https://huggingface.co/datasets/openai/openai_humaneval)

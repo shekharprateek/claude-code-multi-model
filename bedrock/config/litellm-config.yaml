@@ -16,8 +16,8 @@
 # Architecture:
 #   Claude Code (Anthropic Messages API)
 #     -> LiteLLM Proxy (localhost:4000, translates Anthropic -> OpenAI format)
-#       -> Amazon Bedrock `bedrock-mantle` endpoint (Chat Completions API,
-#          bearer token auth)
+#       -> Amazon Bedrock `bedrock-mantle` endpoint (bearer token auth)
+#          OpenAI Chat Completions API (/v1/chat/completions)
 #         -> Any of 38 third-party models from 10 providers
 #
 # Usage: litellm --config config/litellm-config.yaml --port 4000
