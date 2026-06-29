@@ -23,7 +23,7 @@ set -euo pipefail
 #   ./scripts/setup-proxy.sh              # install + start on port 4000
 #   ./scripts/setup-proxy.sh --port 8080  # custom port
 #   ./scripts/setup-proxy.sh --stop       # stop running proxy
-#   ./scripts/setup-proxy.sh --refresh    # refresh Bedrock token (no restart)
+#   ./scripts/setup-proxy.sh --refresh    # refresh token file; restart proxy to apply
 # ---------------------------------------------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -45,7 +45,7 @@ usage() {
     echo "  --port PORT   Port to run proxy on (default: $DEFAULT_PORT)"
     echo "  --stop        Stop running proxy"
     echo "  --status      Check if proxy is running"
-    echo "  --refresh     Refresh Bedrock bearer token without restarting"
+    echo "  --refresh     Refresh Bedrock bearer token file (restart proxy to apply)"
     exit 1
 }
 
@@ -126,8 +126,10 @@ print(provide_token(region='${MANTLE_REGION}'))
 
 refresh_token() {
     generate_token
-    echo "[done] Token refreshed. Proxy will use new token on next request."
-    echo "       If the proxy is running, restart it: $0 --stop && $0"
+    echo "[done] Token refreshed and saved to $TOKEN_FILE."
+    echo "[note] A running proxy will NOT pick up the new token automatically."
+    echo "       The token is injected via MANTLE_API_KEY at proxy startup."
+    echo "       Restart the proxy to use it: $0 --stop && $0"
 }
 
 start_proxy() {
