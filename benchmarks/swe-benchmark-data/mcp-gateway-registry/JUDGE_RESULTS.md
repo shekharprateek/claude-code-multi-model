@@ -6,15 +6,15 @@ Per-cell JSON (with criterion breakdowns + judge notes) lives next to each artif
 
 ## Score matrix
 
+All cells are percentages (0–100%), averaged across the 4 artifacts per (task × model). Bold = top score in row.
+
 | Task | Opus 4.8 | Kimi¹ | Devstral 123B | MiniMax M2.5 | Qwen Coder Next | Task avg |
 |------|---------:|------:|--------------:|-------------:|----------------:|---------:|
-| `remove-faiss` | **90.8** | 87.8 ᵀ | 77.8 | 73.5 | 80.8 | 82.1 |
-| `remove-efs-from-terraform-aws-ecs` | **90.8** | 83.5 ᵀ | 83.8 | 76.0 | 80.2 | 82.8 |
-| `ssrf-hardening-outbound-url-validation` | **90.0** | 66.2 ᵀ | 70.5 | 69.2 | 85.8 | 76.3 |
-| `migrate-ecs-env-vars-to-secrets-manager` | **90.5** | 87.0 ⁵ | 75.0 | 78.5 | 80.8 | 82.3 |
-| `replace-keycloak-db-password-with-rds-iam` | **87.8** | 86.2 ⁵ | 72.8 | 76.2 | 71.5 | 78.9 |
-
-Bold = top score in row.
+| `remove-faiss` | **90.8%** | 87.8% ᵀ | 77.8% | 73.5% | 80.8% | 82.1% |
+| `remove-efs-from-terraform-aws-ecs` | **90.8%** | 83.5% ᵀ | 83.8% | 76.0% | 80.2% | 82.8% |
+| `ssrf-hardening-outbound-url-validation` | **90.0%** | 66.2% ᵀ | 70.5% | 69.2% | 85.8% | 76.3% |
+| `migrate-ecs-env-vars-to-secrets-manager` | **90.5%** | 87.0% ⁵ | 75.0% | 78.5% | 80.8% | 82.3% |
+| `replace-keycloak-db-password-with-rds-iam` | **87.8%** | 86.2% ⁵ | 72.8% | 76.2% | 71.5% | 78.9% |
 
 ¹ **Kimi variant per task:** ᵀ = `kimi-k2-thinking`, ⁵ = `kimi-k2.5`. Tasks 1–3 used K2 Thinking; mid-benchmark its Bedrock backend started hanging requests indefinitely (smoke-test curl timed out after 75s) while K2.5 responded in <1s on the same proxy, so K2.5 was substituted for tasks 4–5.
 
@@ -22,21 +22,21 @@ Bold = top score in row.
 
 | Rank | Model | Avg score | # tasks |
 |-----:|-------|----------:|--------:|
-| 🥇 1 | Claude Opus 4.8 | **89.95** | 5 |
-| 🥈 2 | **Kimi (combined)** | **82.15** | 5 (3 × K2-Thinking + 2 × K2.5) |
-| 🥉 3 | Qwen Coder Next | 79.80 | 5 |
-| 4 | Mistral Devstral 2 123B | 75.95 | 5 |
-| 5 | MiniMax M2.5 | 74.70 | 5 |
+| 🥇 1 | Claude Opus 4.8 | **89.95%** | 5 |
+| 🥈 2 | **Kimi (combined)** | **82.15%** | 5 (3 × K2-Thinking + 2 × K2.5) |
+| 🥉 3 | Qwen Coder Next | 79.80% | 5 |
+| 4 | Mistral Devstral 2 123B | 75.95% | 5 |
+| 5 | MiniMax M2.5 | 74.70% | 5 |
 
 ## Per-task averages (lower = harder for the field)
 
 | Task | Avg | Why this difficulty |
 |------|----:|---------------------|
-| `ssrf-hardening-outbound-url-validation` | **76.3** | Hardest by score — security tasks reward enumeration depth (private IPs, DNS rebinding, redirect handling) that the mid-tier models did not enumerate |
-| `replace-keycloak-db-password-with-rds-iam` | 78.9 | RDS IAM auth pattern is unfamiliar to most models; several hallucinated infeasible AWS mechanics |
-| `remove-faiss` | 82.1 | Mostly bounded removal |
-| `migrate-ecs-env-vars-to-secrets-manager` | 82.3 | Models converged on the ECS `secrets`-block pattern |
-| `remove-efs-from-terraform-aws-ecs` | 82.8 | Easiest — bounded Terraform-only scope |
+| `ssrf-hardening-outbound-url-validation` | **76.3%** | Hardest by score — security tasks reward enumeration depth (private IPs, DNS rebinding, redirect handling) that the mid-tier models did not enumerate |
+| `replace-keycloak-db-password-with-rds-iam` | 78.9% | RDS IAM auth pattern is unfamiliar to most models; several hallucinated infeasible AWS mechanics |
+| `remove-faiss` | 82.1% | Mostly bounded removal |
+| `migrate-ecs-env-vars-to-secrets-manager` | 82.3% | Models converged on the ECS `secrets`-block pattern |
+| `remove-efs-from-terraform-aws-ecs` | 82.8% | Easiest — bounded Terraform-only scope |
 
 ## Synthesis
 

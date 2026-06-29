@@ -82,15 +82,15 @@ you're trying to answer:
 - An interactive **model picker** and per-model launch scripts
 - A **`/swe` skill** for repo-grounded SWE benchmarking, plus a **`/summarize`** skill for after-action reporting (token usage, errors, themes per run)
 - A reproducible **HumanEval benchmark** with cross-model pass@1 + per-token-cost numbers
-- A **GPT-judged 5×5 SWE matrix** comparing model quality on real refactor / security tasks (full matrix and findings in [Evaluation 1 → Worked example](#worked-example-mcp-gateway-registry) below). At a glance:
+- A **GPT-judged 5×5 SWE matrix** comparing model quality on real refactor / security tasks (full matrix and findings in [Evaluation 1 → Worked example](#worked-example-mcp-gateway-registry) below). At a glance (avg % across 5 tasks, scored 0–100):
 
-  | Rank | Model | Avg score / 100 |
-  |-----:|-------|----------------:|
-  | 🥇 | Claude Opus 4.8 | 89.95 |
-  | 🥈 | Kimi (combined) | 82.15 |
-  | 🥉 | Qwen Coder Next | 79.80 |
-  | 4 | Mistral Devstral 2 123B | 75.95 |
-  | 5 | MiniMax M2.5 | 74.70 |
+  | Rank | Model | Avg score |
+  |-----:|-------|----------:|
+  | 🥇 | Claude Opus 4.8 | **89.95%** |
+  | 🥈 | Kimi (combined) | 82.15% |
+  | 🥉 | Qwen Coder Next | 79.80% |
+  | 4 | Mistral Devstral 2 123B | 75.95% |
+  | 5 | MiniMax M2.5 | 74.70% |
 
 ## Architecture
 
@@ -237,8 +237,8 @@ at tag `1.24.4`, with **5 tasks × 5 models = 25 artifact bundles** on disk:
 
 | # | Problem | Difficulty | Source |
 |---|---------|-----------|--------|
-| 1 | `remove-faiss` | Medium | Internal |
-| 2 | `remove-efs-from-terraform-aws-ecs` | Medium | Internal |
+| 1 | `remove-faiss` | Medium | Upstream [#1285](https://github.com/agentic-community/mcp-gateway-registry/issues/1285) / [#452](https://github.com/agentic-community/mcp-gateway-registry/issues/452) |
+| 2 | `remove-efs-from-terraform-aws-ecs` | Medium | Upstream [#1286](https://github.com/agentic-community/mcp-gateway-registry/issues/1286) |
 | 3 | `ssrf-hardening-outbound-url-validation` | Medium | Upstream [#1282](https://github.com/agentic-community/mcp-gateway-registry/issues/1282) |
 | 4 | `migrate-ecs-env-vars-to-secrets-manager` | High | Upstream [#1134](https://github.com/agentic-community/mcp-gateway-registry/issues/1134) |
 | 5 | `replace-keycloak-db-password-with-rds-iam` | High | Upstream [#1303](https://github.com/agentic-community/mcp-gateway-registry/issues/1303) |
@@ -254,44 +254,46 @@ above. Per-cell breakdowns with criterion scores and judge notes are in
 
 #### Results — 5 × 5 matrix
 
+All cells are percentages (0–100%), averaged across the 4 artifacts per (task × model). Bold = top score in row.
+
 | Task | Opus 4.8 | Kimi¹ | Devstral 123B | MiniMax M2.5 | Qwen Coder Next | Task avg |
 |------|---------:|------:|--------------:|-------------:|----------------:|---------:|
-| `remove-faiss` | **90.8** | 87.8 ᵀ | 77.8 | 73.5 | 80.8 | 82.1 |
-| `remove-efs-from-terraform-aws-ecs` | **90.8** | 83.5 ᵀ | 83.8 | 76.0 | 80.2 | 82.8 |
-| `ssrf-hardening-outbound-url-validation` | **90.0** | 66.2 ᵀ | 70.5 | 69.2 | 85.8 | 76.3 |
-| `migrate-ecs-env-vars-to-secrets-manager` | **90.5** | 87.0 ⁵ | 75.0 | 78.5 | 80.8 | 82.3 |
-| `replace-keycloak-db-password-with-rds-iam` | **87.8** | 86.2 ⁵ | 72.8 | 76.2 | 71.5 | 78.9 |
+| `remove-faiss` | **90.8%** | 87.8% ᵀ | 77.8% | 73.5% | 80.8% | 82.1% |
+| `remove-efs-from-terraform-aws-ecs` | **90.8%** | 83.5% ᵀ | 83.8% | 76.0% | 80.2% | 82.8% |
+| `ssrf-hardening-outbound-url-validation` | **90.0%** | 66.2% ᵀ | 70.5% | 69.2% | 85.8% | 76.3% |
+| `migrate-ecs-env-vars-to-secrets-manager` | **90.5%** | 87.0% ⁵ | 75.0% | 78.5% | 80.8% | 82.3% |
+| `replace-keycloak-db-password-with-rds-iam` | **87.8%** | 86.2% ⁵ | 72.8% | 76.2% | 71.5% | 78.9% |
 
-Bold = top score in row. ¹ Kimi variant: ᵀ = K2 Thinking (tasks 1–3),
-⁵ = K2.5 (tasks 4–5; substituted mid-benchmark after K2 Thinking's Bedrock
-backend started hanging requests).
+¹ Kimi variant: ᵀ = K2 Thinking (tasks 1–3), ⁵ = K2.5 (tasks 4–5;
+substituted mid-benchmark after K2 Thinking's Bedrock backend started
+hanging requests).
 
 #### Per-model leaderboard
 
-| Rank | Model | Avg | # tasks |
-|-----:|-------|----:|--------:|
-| 🥇 | Claude Opus 4.8 | **89.95** | 5 |
-| 🥈 | Kimi (combined K2 Thinking + K2.5) | **82.15** | 5 |
-| 🥉 | Qwen Coder Next | 79.80 | 5 |
-| 4 | Mistral Devstral 2 123B | 75.95 | 5 |
-| 5 | MiniMax M2.5 | 74.70 | 5 |
+| Rank | Model | Avg score | # tasks |
+|-----:|-------|----------:|--------:|
+| 🥇 | Claude Opus 4.8 | **89.95%** | 5 |
+| 🥈 | Kimi (combined K2 Thinking + K2.5) | **82.15%** | 5 |
+| 🥉 | Qwen Coder Next | 79.80% | 5 |
+| 4 | Mistral Devstral 2 123B | 75.95% | 5 |
+| 5 | MiniMax M2.5 | 74.70% | 5 |
 
 #### What the data says
 
 - **Opus 4.8 wins every row** by 3–24 points. Per-cell delta to the
   second-place model is small relative to the 10–25× per-token cost ratio.
 - **Kimi is a clear #2**, with a known dip on SSRF where K2 Thinking
-  under-enumerated edge cases (66.2 vs Opus's 90.0).
+  under-enumerated edge cases (66.2% vs Opus's 90.0%).
 - **Mid/budget tier is not a clean ordering.** Qwen has the highest mid-tier
   average but only because of one outlier — strip SSRF out and Qwen,
   Devstral, and MiniMax are within ~2 points of each other. Devstral wins
   `remove-efs`, MiniMax wins `keycloak-iam`.
-- **SSRF was the genuine hardest task** (76.3 avg, 23.8-point spread), not
+- **SSRF was the genuine hardest task** (76.3% avg, 23.8-point spread), not
   the README-labelled "High" tasks. Security work rewards edge-case
   enumeration (private IPs, DNS rebinding, redirect handling) which the
   mid-tier under-delivered on.
 - **Qwen has a coder-specialist sweet spot**: best mid-tier result on SSRF
-  (85.8), weakest on Keycloak IAM (71.5, lost points to hallucinated AWS
+  (85.8%), weakest on Keycloak IAM (71.5%, lost points to hallucinated AWS
   mechanics — judge flagged "impossible ideas such as Lambda valueFrom for
   ECS secrets").
 - **20× cost spread → ~15-point quality spread.** At the top of the field,
