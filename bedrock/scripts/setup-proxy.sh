@@ -199,10 +199,8 @@ print(f'\nTotal: {len(data)} models')
             echo "Usage:"
             echo "  ANTHROPIC_BASE_URL=http://localhost:${PORT} \\"
             echo "  ANTHROPIC_API_KEY=bedrock-proxy \\"
-            echo "  ANTHROPIC_MODEL=qwen-coder-next \\"
-            echo "  DISABLE_PROMPT_CACHING=1 \\"
-            echo "  CLAUDE_CODE_USE_BEDROCK=0 \\"
-            echo "  claude"
+            echo "  claude --settings config/claude-proxy-settings.json \\"
+            echo "         --model qwen.qwen3-coder-next"
             echo ""
             echo "  Or use the picker: ./scripts/claude-model.sh"
             return 0

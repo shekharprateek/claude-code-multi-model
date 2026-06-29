@@ -2,14 +2,14 @@
 
 [![License: MIT-0](https://img.shields.io/badge/License-MIT--0-yellow.svg)](../LICENSE)
 [![Bedrock](https://img.shields.io/badge/Amazon-Bedrock-blue)](https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html)
-[![Models: 45](https://img.shields.io/badge/Models-45%20from%2012%20providers-orange)](./)
+[![Models: 45](https://img.shields.io/badge/Models-45%20from%2011%20providers-orange)](./)
 
 > **This is sample code intended for demonstration and learning purposes only.**
 > It is not meant for production use. Review and harden all scripts, configurations,
 > and IAM permissions before using in any production or sensitive environment.
 
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **any of 45
-foundation models on Amazon Bedrock** — not just Anthropic models. A LiteLLM proxy
+foundation models from 11 providers on Amazon Bedrock** — not just Anthropic models. A LiteLLM proxy
 translates Claude Code's Anthropic Messages API to the OpenAI Chat Completions API
 that the third-party models on Bedrock's OpenAI-compatible `bedrock-mantle`
 endpoint speak, so you can route routine tasks to cheaper models and reserve

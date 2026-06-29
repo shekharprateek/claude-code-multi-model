@@ -1,6 +1,6 @@
 # Claude Code on Amazon EC2 with a Self-Hosted Open-Source Model
 
-[![License: MIT-0](https://img.shields.io/badge/License-MIT--0-yellow.svg)](LICENSE)
+[![License: MIT-0](https://img.shields.io/badge/License-MIT--0-yellow.svg)](../LICENSE)
 [![Ollama](https://img.shields.io/badge/Ollama-compatible-blue)](https://ollama.com)
 [![Model: Qwen 3.5](https://img.shields.io/badge/Model-Qwen%203.5--35B-orange)](https://ollama.com/library/qwen3.5)
 
@@ -104,14 +104,14 @@ open — access is via SSH tunnel.
 SSH in and run the setup script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/shekharprateek/claude-code-on-amazon-ec2/main/scripts/ec2-setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/aws-samples/sample-claude-code-multi-model/main/self-hosted/scripts/ec2-setup.sh | bash
 ```
 
 Or clone and run:
 
 ```bash
-git clone https://github.com/shekharprateek/claude-code-on-amazon-ec2 ~/claude-code-on-amazon-ec2
-bash ~/claude-code-on-amazon-ec2/scripts/ec2-setup.sh
+git clone https://github.com/aws-samples/sample-claude-code-multi-model ~/sample-claude-code-multi-model
+bash ~/sample-claude-code-multi-model/self-hosted/scripts/ec2-setup.sh
 ```
 
 This installs Ollama, pulls Qwen 3.5-35B (~22GB on first run), and verifies the model
@@ -185,4 +185,4 @@ aws ec2 delete-security-group --region us-east-1 --group-id <sg-id>
 
 ## See Also
 
-- **[Claude Code Multi-Model on Amazon Bedrock](https://github.com/shekharprateek/claude-code-multi-model-bedrock)** — Run Claude Code with 45 models from 11 providers (Qwen, DeepSeek, Mistral, Kimi, MiniMax, and more) via Amazon Bedrock. No GPU needed — fully managed.
+- **[Claude Code Multi-Model on Amazon Bedrock](../bedrock/README.md)** — Run Claude Code with 45 models from 11 providers (Qwen, DeepSeek, Mistral, Kimi, MiniMax, and more) via Amazon Bedrock. No GPU needed — fully managed.
