@@ -2,7 +2,7 @@
 
 [![License: MIT-0](https://img.shields.io/badge/License-MIT--0-yellow.svg)](LICENSE)
 [![Bedrock](https://img.shields.io/badge/Amazon-Bedrock-blue)](https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html)
-[![Models: 45+](https://img.shields.io/badge/Models-45%2B%20from%2012%20providers-orange)](./)
+[![Models: 45](https://img.shields.io/badge/Models-45%20from%2011%20providers-orange)](./)
 
 > **This is sample code intended for demonstration and learning purposes only.**
 > It is not meant for production use. Review and harden all scripts, configurations,
@@ -20,9 +20,11 @@ This repository does **two** things, in this order:
    models), or to any open-source model you self-host on an EC2 GPU instance.
 2. **Measure how well each of those models actually does coding work.** Once you
    can swap models freely, the next question is: which model is good enough for
-   which task? The repo ships two complementary evaluation modes — a per-task
-   *Software Engineering* benchmark you point at any GitHub repo, and a single-
-   function *HumanEval* benchmark with published cross-model results.
+   which task? The repo ships two complementary evaluation modes — the
+   **`/swe` skill**, a per-task Software Engineering benchmark you point at any
+   GitHub repo (5 tasks × 5 models already populated for `mcp-gateway-registry`,
+   GPT-judged), and the **HumanEval benchmark**, a single-function `pass@1`
+   suite with published cross-model results.
 
 The first half is plumbing; the second is what makes the plumbing decision-grade.
 
@@ -54,7 +56,7 @@ runs and how Claude Code reaches it.
 
 | Path | Models | Cost Model | Best For |
 |------|--------|------------|----------|
-| [**Bedrock**](bedrock/) | 45 models from 12 providers | Pay-per-token | Model variety, zero infrastructure |
+| [**Bedrock**](bedrock/) | 45 models from 11 providers | Pay-per-token | Model variety, zero infrastructure |
 | [**Self-Hosted (EC2)**](self-hosted/) | Any Ollama/vLLM model | Fixed hourly GPU cost | Data sovereignty, air-gapped, unlimited tokens |
 
 ### How it measures the models
@@ -193,6 +195,31 @@ broken down by model and cache type, and recurring themes from the conversation.
 Useful when you're comparing many model+task combinations and don't want to eyeball
 every transcript.
 
+### Scoring rubric (LLM-as-judge)
+
+Each of the 4 artifacts is scored 0–100 by an independent ChatGPT session — a
+cross-lineage judge that does not share training with most of the contestants.
+Within each artifact, the judge applies the same 4-criterion rubric, **25
+points per criterion, summing to 100**:
+
+| Criterion | 0–25 each | What the judge evaluates |
+|-----------|-----------|--------------------------|
+| **Completeness** | 25 | Did the artifact identify all affected files, dependencies, and components? Any obvious touchpoints (Terraform, IAM, Docker, tests, docs) missed? |
+| **Correctness** | 25 | Are the proposed changes technically right? Would the design actually work? Are AWS service patterns idiomatic (e.g. ECS `secrets` block vs custom boto3 code)? |
+| **Specificity** | 25 | Concrete file paths, line numbers, code snippets, resource names — or vague hand-waving ("update the relevant files")? Could a junior engineer implement this artifact alone? |
+| **Risk awareness** | 25 | Rollback strategy, backwards-compat, deployment cutover, edge cases (cold start, secret rotation, token expiry, etc.) — enumerated or ignored? |
+
+**Artifact total = sum of 4 criteria (0–100).**
+**Task score = mean of the 4 artifact totals (also 0–100).**
+
+Calibration: the judge is instructed that a median artifact should score around
+60–70, not 85; 90+ is reserved for genuinely excellent work; hallucinated files
+or functions lose at least 10 points off Correctness. Results are reported in
+a 5×5 matrix (rows = tasks, columns = models). Per-cell JSON with criterion
+breakdowns and judge notes lives at `{task}/{model}/judge-gpt.json`. The
+aggregated matrix + synthesis is in
+[`benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md`](benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md).
+
 ### Worked example: `mcp-gateway-registry`
 
 The repo ships a fully-populated worked example so you can see the harness
@@ -301,7 +328,7 @@ Pick a path that matches what you're trying to do.
 
 | | Bedrock | Self-Hosted (EC2) |
 |---|---|---|
-| **Models** | 45 from 12 providers | Any GGUF/HF model |
+| **Models** | 45 from 11 providers | Any GGUF/HF model |
 | **Pricing** | Per-token ($0.15-$15/M) | Per-hour ($0.84-$4.60/hr GPU) |
 | **Setup time** | 5 minutes | 15-20 minutes |
 | **Latency** | Varies by model (a few sec to minutes/task) | Depends on GPU + model size |

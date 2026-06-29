@@ -6,8 +6,8 @@ set -euo pipefail
 #
 # Recommended: clone the repo and run locally rather than piping from curl:
 #
-#   git clone <repo-url> ~/claude-code-on-amazon-ec2
-#   bash ~/claude-code-on-amazon-ec2/scripts/ec2-setup.sh
+#   git clone <repo-url> ~/sample-claude-code-multi-model
+#   bash ~/sample-claude-code-multi-model/self-hosted/scripts/ec2-setup.sh
 #
 # What it does:
 #   1. Installs Ollama
