@@ -225,7 +225,7 @@ Calibration: the judge is instructed that a median artifact should score around
 60–70, not 85; 90+ is reserved for genuinely excellent work; hallucinated files
 or functions lose at least 10 points off Correctness. Results are reported in
 a 5×6 matrix (rows = tasks, columns = models). Per-cell JSON with criterion
-breakdowns and judge notes lives at `{task}/{model}/judge-gpt.json`. The
+breakdowns and judge notes lives at `{task}/{model}/eval.json`. The
 aggregated matrix + synthesis is in
 [`benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md`](benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md).
 
@@ -249,7 +249,7 @@ at tag `1.24.4`, with **5 tasks × 6 models = 30 artifact bundles** on disk:
 **Cross-model scores (GPT-judged):** each artifact bundle was scored 0–100 by
 an independent ChatGPT session against the [4-criterion × 25-point rubric](#scoring-rubric-llm-as-judge)
 above. Per-cell breakdowns with criterion scores and judge notes are in
-`{task}/{model}/judge-gpt.json`; the consolidated report is in
+`{task}/{model}/eval.json`; the consolidated report is in
 [`benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md`](benchmarks/swe-benchmark-data/mcp-gateway-registry/JUDGE_RESULTS.md).
 
 #### Results — 5 × 6 matrix
@@ -405,7 +405,7 @@ claude-code-multi-model/
 │           ├── repo/          (gitignored — contributor clones source here)
 │           ├── JUDGE_RESULTS.md       Consolidated 5×6 matrix + synthesis
 │           ├── remove-faiss/
-│           │   └── {model}/           github-issue.md, lld.md, review.md, testing.md, judge-gpt.json
+│           │   └── {model}/           github-issue.md, lld.md, review.md, testing.md, eval.json
 │           ├── remove-efs-from-terraform-aws-ecs/
 │           ├── ssrf-hardening-outbound-url-validation/
 │           ├── migrate-ecs-env-vars-to-secrets-manager/
