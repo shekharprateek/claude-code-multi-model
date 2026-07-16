@@ -1,13 +1,13 @@
 {
   "task": "replace-keycloak-db-password-with-rds-iam",
-  "model": "qwen3.6-35b",
+  "model": "glm-5.2",
   "scores": {
     "github_issue": {
       "completeness": 17,
       "correctness": 17,
       "specificity": 17,
-      "risk_awareness": 16,
-      "total": 67,
+      "risk_awareness": 17,
+      "total": 68,
       "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "lld": {
@@ -19,22 +19,22 @@
       "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "review": {
-      "completeness": 16,
-      "correctness": 16,
-      "specificity": 16,
-      "risk_awareness": 16,
-      "total": 64,
-      "notes": "Weak artifact: under-specified or technically shaky on Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback, with missing files/patterns or insufficient risk/test coverage."
-    },
-    "testing": {
       "completeness": 17,
       "correctness": 17,
       "specificity": 17,
+      "risk_awareness": 18,
+      "total": 69,
+      "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
+    },
+    "testing": {
+      "completeness": 18,
+      "correctness": 17,
+      "specificity": 18,
       "risk_awareness": 17,
-      "total": 68,
+      "total": 70,
       "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     }
   },
-  "task_score": 66.25,
+  "task_score": 68.25,
   "verdict": "Mixed design set with partial value, but enough gaps or incorrect assumptions that it is risky as sole guidance."
 }

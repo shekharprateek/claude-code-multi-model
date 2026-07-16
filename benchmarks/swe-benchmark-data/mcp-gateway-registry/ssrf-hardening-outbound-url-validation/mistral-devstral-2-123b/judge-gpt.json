@@ -4,37 +4,37 @@
   "scores": {
     "github_issue": {
       "completeness": 18,
-      "correctness": 20,
+      "correctness": 17,
       "specificity": 18,
-      "risk_awareness": 15,
-      "total": 71,
-      "notes": "Reasonable issue framing but sparse acceptance details."
+      "risk_awareness": 17,
+      "total": 70,
+      "notes": "Mixed artifact: has some useful outbound URL validation, private/reserved IP blocking, redirects, DNS/rebinding concerns, and endpoint coverage detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "lld": {
-      "completeness": 12,
-      "correctness": 13,
-      "specificity": 10,
-      "risk_awareness": 11,
-      "total": 46,
-      "notes": "LLD is far too short and vague to implement safely."
+      "completeness": 11,
+      "correctness": 10,
+      "specificity": 11,
+      "risk_awareness": 10,
+      "total": 42,
+      "notes": "Weak artifact: under-specified or technically shaky on outbound URL validation, private/reserved IP blocking, redirects, DNS/rebinding concerns, and endpoint coverage, with missing files/patterns or insufficient risk/test coverage."
     },
     "review": {
-      "completeness": 19,
-      "correctness": 20,
-      "specificity": 17,
-      "risk_awareness": 21,
-      "total": 77,
-      "notes": "Review is more useful than the design and catches some security risks."
+      "completeness": 16,
+      "correctness": 16,
+      "specificity": 15,
+      "risk_awareness": 16,
+      "total": 63,
+      "notes": "Weak artifact: under-specified or technically shaky on outbound URL validation, private/reserved IP blocking, redirects, DNS/rebinding concerns, and endpoint coverage, with missing files/patterns or insufficient risk/test coverage."
     },
     "testing": {
-      "completeness": 22,
-      "correctness": 21,
-      "specificity": 22,
-      "risk_awareness": 23,
-      "total": 88,
-      "notes": "Strong curl and rollback-oriented testing plan."
+      "completeness": 20,
+      "correctness": 19,
+      "specificity": 20,
+      "risk_awareness": 19,
+      "total": 78,
+      "notes": "Adequate artifact: identifies the main outbound URL validation, private/reserved IP blocking, redirects, DNS/rebinding concerns, and endpoint coverage surfaces but misses some touchpoints, edge cases, or rollout detail."
     }
   },
-  "task_score": 70.5,
-  "verdict": "MIXED: testing is good, but the core LLD is not actionable enough."
+  "task_score": 63.25,
+  "verdict": "Low-confidence design set that would require substantial rework before implementation."
 }

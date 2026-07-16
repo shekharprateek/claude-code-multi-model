@@ -3,38 +3,38 @@
   "model": "minimax-m2-5",
   "scores": {
     "github_issue": {
-      "completeness": 19,
-      "correctness": 20,
-      "specificity": 18,
+      "completeness": 17,
+      "correctness": 17,
+      "specificity": 17,
       "risk_awareness": 17,
-      "total": 74,
-      "notes": "Captures main security goal, but misses some service-specific details."
+      "total": 68,
+      "notes": "Mixed artifact: has some useful ECS task-definition secrets blocks, Secrets Manager resources, execution-role IAM/KMS grants, and rollout of seeded values detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "lld": {
-      "completeness": 21,
-      "correctness": 19,
-      "specificity": 21,
+      "completeness": 18,
+      "correctness": 17,
+      "specificity": 18,
       "risk_awareness": 17,
-      "total": 78,
-      "notes": "Uses ECS secrets correctly, but suggests keeping old env vars initially, risking duplicate/conflicting names."
+      "total": 70,
+      "notes": "Mixed artifact: has some useful ECS task-definition secrets blocks, Secrets Manager resources, execution-role IAM/KMS grants, and rollout of seeded values detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "review": {
-      "completeness": 21,
-      "correctness": 21,
-      "specificity": 20,
-      "risk_awareness": 20,
-      "total": 82,
-      "notes": "Decent review, not enough focus on execution-role and duplicate-name hazards."
+      "completeness": 18,
+      "correctness": 18,
+      "specificity": 18,
+      "risk_awareness": 18,
+      "total": 72,
+      "notes": "Adequate artifact: identifies the main ECS task-definition secrets blocks, Secrets Manager resources, execution-role IAM/KMS grants, and rollout of seeded values surfaces but misses some touchpoints, edge cases, or rollout detail."
     },
     "testing": {
-      "completeness": 21,
-      "correctness": 21,
-      "specificity": 20,
-      "risk_awareness": 18,
-      "total": 80,
-      "notes": "Solid terraform checks, limited rotation and rollback depth."
+      "completeness": 18,
+      "correctness": 18,
+      "specificity": 18,
+      "risk_awareness": 17,
+      "total": 71,
+      "notes": "Mixed artifact: has some useful ECS task-definition secrets blocks, Secrets Manager resources, execution-role IAM/KMS grants, and rollout of seeded values detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     }
   },
-  "task_score": 78.5,
-  "verdict": "GOOD: core AWS pattern is right, but migration sequencing has correctness risk."
+  "task_score": 70.25,
+  "verdict": "Mixed design set with partial value, but enough gaps or incorrect assumptions that it is risky as sole guidance."
 }

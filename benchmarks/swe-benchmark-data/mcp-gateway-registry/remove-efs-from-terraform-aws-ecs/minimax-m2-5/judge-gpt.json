@@ -3,38 +3,38 @@
   "model": "minimax-m2-5",
   "scores": {
     "github_issue": {
-      "completeness": 18,
-      "correctness": 20,
-      "specificity": 18,
+      "completeness": 16,
+      "correctness": 15,
+      "specificity": 16,
       "risk_awareness": 15,
-      "total": 71,
-      "notes": "Captures EFS removal but misses deployment scripts and several docs/runbook surfaces."
+      "total": 62,
+      "notes": "Weak artifact: under-specified or technically shaky on Terraform EFS resources, ECS volumes/mounts, scripts, outputs, docs, and destroy/rollback handling, with missing files/patterns or insufficient risk/test coverage."
     },
     "lld": {
-      "completeness": 19,
-      "correctness": 20,
-      "specificity": 18,
-      "risk_awareness": 17,
-      "total": 74,
-      "notes": "Concise Terraform map, but omits important post-deploy script handling."
+      "completeness": 16,
+      "correctness": 16,
+      "specificity": 16,
+      "risk_awareness": 16,
+      "total": 64,
+      "notes": "Weak artifact: under-specified or technically shaky on Terraform EFS resources, ECS volumes/mounts, scripts, outputs, docs, and destroy/rollback handling, with missing files/patterns or insufficient risk/test coverage."
     },
     "review": {
-      "completeness": 20,
-      "correctness": 20,
-      "specificity": 19,
-      "risk_awareness": 21,
-      "total": 80,
-      "notes": "Decent risks around data and rollback."
+      "completeness": 16,
+      "correctness": 17,
+      "specificity": 16,
+      "risk_awareness": 17,
+      "total": 66,
+      "notes": "Mixed artifact: has some useful Terraform EFS resources, ECS volumes/mounts, scripts, outputs, docs, and destroy/rollback handling detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "testing": {
-      "completeness": 20,
-      "correctness": 20,
-      "specificity": 20,
-      "risk_awareness": 19,
-      "total": 79,
-      "notes": "Useful terraform checks but limited script and scopes validation."
+      "completeness": 16,
+      "correctness": 16,
+      "specificity": 17,
+      "risk_awareness": 16,
+      "total": 65,
+      "notes": "Mixed artifact: has some useful Terraform EFS resources, ECS volumes/mounts, scripts, outputs, docs, and destroy/rollback handling detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     }
   },
-  "task_score": 76,
-  "verdict": "ADEQUATE: main Terraform removal is understandable, but deployment cleanup is incomplete."
+  "task_score": 64.25,
+  "verdict": "Low-confidence design set that would require substantial rework before implementation."
 }

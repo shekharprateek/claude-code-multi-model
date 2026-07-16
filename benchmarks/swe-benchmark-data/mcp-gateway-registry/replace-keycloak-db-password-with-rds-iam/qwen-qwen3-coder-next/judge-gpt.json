@@ -3,38 +3,38 @@
   "model": "qwen-qwen3-coder-next",
   "scores": {
     "github_issue": {
-      "completeness": 17,
-      "correctness": 18,
-      "specificity": 16,
-      "risk_awareness": 15,
-      "total": 66,
-      "notes": "Basic issue, but includes questionable Docker/Helm scope and understates proxy/token issues."
+      "completeness": 19,
+      "correctness": 19,
+      "specificity": 19,
+      "risk_awareness": 19,
+      "total": 76,
+      "notes": "Adequate artifact: identifies the main Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback surfaces but misses some touchpoints, edge cases, or rollout detail."
     },
     "lld": {
-      "completeness": 16,
-      "correctness": 11,
-      "specificity": 19,
-      "risk_awareness": 17,
-      "total": 63,
-      "notes": "Contains impossible or non-idiomatic ideas such as Lambda valueFrom for ECS secrets and EFS-backed init token sharing."
+      "completeness": 19,
+      "correctness": 19,
+      "specificity": 20,
+      "risk_awareness": 19,
+      "total": 77,
+      "notes": "Adequate artifact: identifies the main Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback surfaces but misses some touchpoints, edge cases, or rollout detail."
     },
     "review": {
-      "completeness": 18,
-      "correctness": 18,
-      "specificity": 17,
-      "risk_awareness": 22,
+      "completeness": 19,
+      "correctness": 19,
+      "specificity": 18,
+      "risk_awareness": 19,
       "total": 75,
-      "notes": "Review identifies token lifetime and rollback concerns, but not all design impossibilities."
+      "notes": "Adequate artifact: identifies the main Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback surfaces but misses some touchpoints, edge cases, or rollout detail."
     },
     "testing": {
-      "completeness": 21,
+      "completeness": 20,
       "correctness": 19,
-      "specificity": 21,
-      "risk_awareness": 21,
-      "total": 82,
-      "notes": "Testing plan is useful but cannot compensate for incorrect implementation mechanics."
+      "specificity": 20,
+      "risk_awareness": 19,
+      "total": 78,
+      "notes": "Adequate artifact: identifies the main Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback surfaces but misses some touchpoints, edge cases, or rollout detail."
     }
   },
-  "task_score": 71.5,
-  "verdict": "ADEQUATE: good test instincts, but the LLD has serious AWS/ECS correctness flaws."
+  "task_score": 76.5,
+  "verdict": "Usable but uneven design set; implementation would need senior review to fill gaps and correct weak spots."
 }

@@ -3,38 +3,38 @@
   "model": "minimax-m2-5",
   "scores": {
     "github_issue": {
-      "completeness": 17,
-      "correctness": 18,
+      "completeness": 16,
+      "correctness": 16,
       "specificity": 16,
       "risk_awareness": 15,
-      "total": 66,
-      "notes": "Captures the headline requirement but is thin on RDS Proxy, TLS, and token lifecycle."
+      "total": 63,
+      "notes": "Weak artifact: under-specified or technically shaky on Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback, with missing files/patterns or insufficient risk/test coverage."
     },
     "lld": {
-      "completeness": 20,
-      "correctness": 17,
-      "specificity": 21,
-      "risk_awareness": 19,
-      "total": 77,
-      "notes": "Detailed enough to start, but the token refresh and Keycloak connection-pool story is not fully correct."
+      "completeness": 16,
+      "correctness": 16,
+      "specificity": 16,
+      "risk_awareness": 16,
+      "total": 64,
+      "notes": "Weak artifact: under-specified or technically shaky on Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback, with missing files/patterns or insufficient risk/test coverage."
     },
     "review": {
-      "completeness": 19,
-      "correctness": 19,
-      "specificity": 18,
-      "risk_awareness": 22,
-      "total": 78,
-      "notes": "Review has reasonable risk flags."
+      "completeness": 16,
+      "correctness": 17,
+      "specificity": 16,
+      "risk_awareness": 17,
+      "total": 66,
+      "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     },
     "testing": {
-      "completeness": 21,
-      "correctness": 20,
-      "specificity": 21,
-      "risk_awareness": 22,
-      "total": 84,
-      "notes": "Good AWS/IAM validation plan with rollback checks."
+      "completeness": 17,
+      "correctness": 17,
+      "specificity": 17,
+      "risk_awareness": 16,
+      "total": 67,
+      "notes": "Mixed artifact: has some useful Keycloak/RDS IAM auth mechanics, rds-db:connect IAM, token generation/refresh, Terraform wiring, and rollback detail, but important omissions, weak specificity, or questionable technical assumptions reduce confidence."
     }
   },
-  "task_score": 76.25,
-  "verdict": "GOOD-ENOUGH: actionable in parts, but correctness is shaky for the hardest edge cases."
+  "task_score": 65.0,
+  "verdict": "Mixed design set with partial value, but enough gaps or incorrect assumptions that it is risky as sole guidance."
 }
