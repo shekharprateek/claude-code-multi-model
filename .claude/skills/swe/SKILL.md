@@ -13,6 +13,34 @@ Use this skill when the user wants to evaluate how a particular LLM performs on 
 
 **This skill stops at design.** It does not write or modify production code, run tests, open PRs, or commit anything. The deliverable is the four artifact files described below.
 
+## Non-Interactive Mode (Headless)
+
+When ALL required parameters are provided upfront in a single message, skip all confirmation prompts and run end-to-end without asking questions. This enables fully automated benchmark runs via `claude -p`.
+
+**Required parameters for non-interactive mode:**
+
+```
+/swe repo: <local-path-to-repo> problem: <problem-slug> model: <model-name> tag: <git-tag> answers: "<answers-block>"
+```
+
+Example:
+```
+/swe repo: benchmarks/swe-benchmark-data/mcp-gateway-registry/repo problem: ssrf-hardening-outbound-url-validation model: kimi-k2.7-code tag: 1.24.4 answers: "1. Security audit finding — the registry fetches user-supplied URLs with no SSRF guard. 2. Operators and downstream teams. 3. Python/FastAPI, ECS, no deadline, backwards-compatible. 4. Medium."
+```
+
+**When non-interactive mode is triggered:**
+- Do NOT ask for model confirmation — use the `model:` parameter directly
+- Do NOT ask for the GitHub URL — derive `{repo-name}` from the local `repo:` path
+- Do NOT ask for tag confirmation — use the `tag:` parameter
+- Do NOT ask for task confirmation — use the `problem:` parameter as-is
+- Do NOT ask clarifying questions (1.5) — parse answers from the `answers:` parameter
+- Do NOT ask before creating folders or overwriting — proceed directly
+- Do NOT present summary or seek guidance at the end — just write all 4 artifacts and exit
+
+**Detection rule:** If the user message contains ALL of `repo:`, `problem:`, `model:`, AND `answers:` — enter non-interactive mode. If any are missing, fall back to the normal interactive flow below.
+
+---
+
 ## Workflow
 
 1. **Gather Requirements** - Detect the active model and confirm it; ask for the GitHub URL; ask for tag-vs-main; confirm the task; locate or clone the target repo with user approval
